@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280", initial-scale=1.0" />
+  <title>Home | Momchi's Genetics Tools</title>
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="style_footer.css">
+ <link rel="stylesheet" href="chatbox.css">
+ <link rel="stylesheet" href="drop_style.css">
+ <link rel="stylesheet" href="style_lang.css">
+ <style>
+    .home-images {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .home-image-button {
+      width: 220px;
+      height: auto;
+      display: block;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .home-image-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+    
+ .video-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 60px auto;
+  padding: 25px;
+  background-color: var(--container);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  width: 60%;
+  max-width: 720px;
+  text-align: center;
+}
+
+.video-box h3 {
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.video-box video {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  border-radius: 12px;
+}
+
+  </style>
+</head>
+<body>
+<div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+<h1> <img src="Logo.png" alt="Logo" class="logo"> <p data-translate="welcome_title"> Welcome to Momchi's Genetics Tools </p></h1>
+<hr> 
+   <div class="hero" style="background-image: url('cover.png'); background-size: cover; background-position: center;">
+
+  
+  <div class="hero-text-box">
+    <h3 data-translate="welcome_title1">User-Friendly Bioinformatics Toolset</h3>
+    <p data-translate="welcome_text">
+      Our website offers a wide variety of powerful tools and calculators designed to support genetic, genomic, and population-level analyses. Whether you are a student, researcher, or simply curious about biology, you’ll find resources that are intuitive, accurate, and easy to use. Best of all, every feature is completely free and requires no registration. Explore, experiment, and enjoy your experience with Momchi’s Genetics Tools — your companion for learning, discovery, and research in modern genetics.
+    </p>
+  </div>
+  <div class="explore-box">
+    <h3 data-translate="welcome_title2">Explore a free set of user-friendly Genetics TOOLS and CALCULATORS</h3>
+    <div class="home-images">
+      <a href="tools_home.html">
+        <img src="tools.png" alt="Tools" class="home-image-button">
+      </a>
+      <a href="calculators_home.html">
+        <img src="calculators.png" alt="Calculators" class="home-image-button">
+      </a>
+    </div>
+  </div>
+ </div>
+<div class="video-box">
+  <h3 data-translate="welcome_video"> Learn Genetics with Momchi — Video Overview</h3>
+  <video controls>
+    <source src="video_home.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div class="hero" style="background-image: url('cover2.png'); background-size: cover; background-position: center;">
+<div class="hero-text-box">
+    <h3 data-translate="welcome_title3">Goals</h3>
+    <p data-translate="welcome_text3">
+      The primary goal of Momchi’s Genetics Tools is to make genetic analysis accessible to all—bridging the gap between scientific expertise and practical understanding. By combining clarity of design with analytical depth, the platform empowers users with limited background in genetics to perform meaningful explorations of biological data. At the same time, it provides the precision, scalability, and methodological rigor required to support advanced research applications. This dual focus ensures that both learners and professionals can engage with modern genetic analysis at the highest level of accuracy and scientific integrity.    </p>
+  </div>
+
+</div>
+</div>
+  </div>
+  <div id="chatbox-button">💬</div>
+
+<div id="chatbox">
+  <div class="chatbox-header">
+    <span data-translate="chatbox1">Contact Me</span>
+    <button id="close-chat">✖</button>
+  </div>
+  <div class="chatbox-body">
+    <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+    <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+    <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+    <button id="send-message" data-translate="chatbox5">Send</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+
+  <script src="theme-toggle.js"></script>
+  <script src="translate.js"></script>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

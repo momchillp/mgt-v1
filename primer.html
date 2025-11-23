@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="chatbox.css">
+  <link rel="stylesheet" href="style_footer.css">
+  <link rel="stylesheet" href="drop_style.css">
+  <link rel="stylesheet" href="style_lang.css">
+  <title>Primer Design Tool</title>
+</head>
+<body>
+  <div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+    <h1>
+      <img src="Logo.png" alt="Logo" class="logo">
+      <span class="half1" data-translate="primer_title">Primer Design Tool</span>
+      <span class="half2">| Momchi's Genetics Tools™</span>
+    </h1>
+    <hr>
+
+    <!-- Inputs -->
+    <label for="sequence-input" data-translate="DNA_to_RNA_text1">Paste DNA Sequence (FASTA or plain):</label>
+    <textarea id="sequence-input" data-translate="DNA_to_RNA_text2" placeholder="e.g. >Sequence 1&#10;ATGCGT..."></textarea>
+
+    <label for="tm-input" data-translate="primer_text1">Optimal Tm (°C):</label>
+    <input type="number" id="tm-input" value="60" step="0.1" min="30" max="100">
+
+    <label for="tm-diff" data-translate="primer_text2">Max Tm Difference (°C):</label>
+    <input type="number" id="tm-diff" value="3" step="0.1" min="0" max="10">
+
+    <label for="min-length" data-translate="primer_text3">Minimum Product Length (nt):</label>
+    <input type="number" id="min-length" value="300" step="10" min="50" max="10000">
+    
+    <label for="na-conc">[Na⁺] (mM):</label>
+    <input type="number" id="na-conc" value="50" min="0" max="1000">
+
+    <label for="primer-conc" data-translate="primer_text_new">Primer conc. (nM):</label>
+    <input type="number" id="primer-conc" value="500" min="1" max="10000">
+
+
+    <label for="num-pairs" data-translate="primer_text4">Number of Primer Pairs (1–20):</label>
+    <input type="number" id="num-pairs" value="5" min="1" max="20">
+
+    <label for="region-start" data-translate="primer_text5">Optional: Target Region Start (1-based):</label>
+    <input type="number" id="region-start" placeholder="e.g. 100">
+
+    <label for="region-end" data-translate="primer_text6">Optional: Target Region End (1-based):</label>
+    <input type="number" id="region-end" placeholder="e.g. 800">
+
+    <button id="run-button" data-translate="primer_text7">Design Primers</button>
+
+    <div id="primer-results"></div>
+
+    <h2 class="section-title" data-translate="primer_text9">Primer Map</h2>
+    <div class="canvas-container">
+      <canvas id="sequence-map"></canvas>
+      <div class="canvas-tooltip" id="canvas-tooltip"></div>
+    </div>
+    <hr>
+
+    <p data-translate="primer_text8">The Primer Design Tool identifies optimal forward and reverse primers flanking a specified DNA region based on user-defined parameters like melting temperature, GC content, and product length. It provides a detailed results table and a visual map showing primer positions, directions, and the targeted sequence region for easy interpretation. ATENTION: This tool is currently under development; for critical experiments, we strongly recommend verifying the results independently.</p>
+  </div>
+
+  <div id="chatbox-button">💬</div>
+  <div id="chatbox">
+    <div class="chatbox-header">
+      <span data-translate="chatbox1">Contact Me</span>
+      <button id="close-chat">✖</button>
+    </div>
+    <div class="chatbox-body">
+      <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+      <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+      <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+      <button id="send-message" data-translate="chatbox5">Send</button>
+    </div>
+  </div>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="translate.js"></script>
+  <script src="primer.js"></script>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+</body>
+</html>

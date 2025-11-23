@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280", initial-scale=1.0">
+<title>GC Content Analyzer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="chatbox.css">
+<link rel="stylesheet" href="style_footer.css">
+<link rel="stylesheet" href="drop_style.css">
+<link rel="stylesheet" href="style_lang.css">
+<style>
+    #gcResult { margin-top: 20px; font-weight: bold; }
+  canvas { margin-top: 20px; }
+  #heatmapContainer { display: flex; align-items: center; margin-top: 30px; gap: 20px; }
+  #heatmapWrapper { overflow-x: auto; border: 1px solid #ccc; border-radius: 4px; padding: 5px; max-width: 800px; }
+  #gcHeatmapCanvas { height: 50px; display: block; }
+  #legend { display: flex; align-items: center; gap: 8px; }
+  #legendLabels { display: flex; flex-direction: column; justify-content: space-between; height: 150px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+
+
+<h1>
+      <img src="Logo.png" alt="Logo" class="logo">
+  <span class="half1" data-translate="GC_title">GC% calculator</span>
+  <span class="half2">| Momchi's Genetics Tools™</span>
+</h1>
+
+<p data-translate="GC_text1">Paste your DNA/RNA sequence below to calculate overall GC% and view local GC% in graphs and heatmaps.</p>
+
+<textarea id="seqInput" data-translate="GC_text2" placeholder="Enter DNA or RNA sequence here..."></textarea><br>
+<label for="windowSize" data-translate="GC_text3">Window size: </label>
+<input type="number" id="windowSize" value="50" min="5" max="1000">
+<button id="analyzeBtn" data-translate="GC_text6">Analyze</button>
+
+<div id="gcResult"></div>
+<canvas id="gcChart"></canvas>
+
+<h3 data-translate="GC_text4">GC% Heatmap Representation</h3>
+<div id="heatmapContainer">
+  <div id="heatmapWrapper">
+    <canvas id="gcHeatmapCanvas"></canvas>
+  </div>
+  <div id="legend">
+    <canvas id="legendCanvas" width="20" height="150"></canvas>
+    <div id="legendLabels">
+      <span>100%</span>
+      <span>50%</span>
+      <span>0%</span>
+    </div>
+  </div>
+</div>
+
+
+<canvas id="overviewCanvas" width="600" height="20" style="margin-top:5px; border:1px solid #666; cursor:pointer;"></canvas>
+<hr>
+<p data-translate="GC_text5">This tool analyzes DNA or RNA sequences to calculate the guanine–cytosine (GC) content. Results are presented as both a precise percentage value and two visual representations: a line graph showing GC% variation across the sequence, and a color-coded heatmap highlighting local GC-rich and GC-poor regions. </p>
+
+<script>
+function cleanSequence(seq) {
+  return seq.toUpperCase().replace(/[^ACGTU]/g, "");
+}
+
+function calcGC(seq) {
+  let gc = (seq.match(/[GC]/g) || []).length;
+  return (gc / seq.length * 100).toFixed(2);
+}
+
+function calcSlidingGC(seq, windowSize) {
+  let values = [];
+  for (let i = 0; i <= seq.length - windowSize; i++) {
+    let windowSeq = seq.slice(i, i + windowSize);
+    let gc = (windowSeq.match(/[GC]/g) || []).length;
+    values.push((gc / windowSize * 100).toFixed(2));
+  }
+  return values;
+}
+
+function gcToColor(gc) {
+  gc = parseFloat(gc);
+
+  // Center GC at 50% → green
+  // Below 50 → blue gradient
+  // Above 50 → red gradient
+  // Faster color change (nonlinear sensitivity)
+  const sensitivity = 2.2; // try 2.0–3.0 for sharper changes
+
+  if (gc < 50) {
+    // Scale 0–50 to 0–1
+    let ratio = Math.pow(gc / 50, sensitivity);
+    let r = 0;
+    let g = Math.round(255 * ratio);
+    let b = 255 - Math.round(200 * ratio); // deeper blue at low GC
+    return `rgb(${r},${g},${b})`;
+  } else {
+    let ratio = Math.pow((gc - 50) / 50, sensitivity);
+    let r = 255 - Math.round(100 * (1 - ratio)); // strong red
+    let g = 255 - Math.round(255 * ratio);
+    let b = 0;
+    return `rgb(${r},${g},${b})`;
+  }
+}
+
+function drawHeatmap(gcValues, zoom = 1, offset = 0) {
+  let canvas = document.getElementById("gcHeatmapCanvas");
+  let ctx = canvas.getContext("2d");
+
+  let width = gcValues.length * zoom;
+  canvas.width = width;
+  canvas.height = 50;
+
+  let barWidth = width / gcValues.length;
+  gcValues.forEach((gc, i) => {
+    ctx.fillStyle = gcToColor(gc);
+    ctx.fillRect(i * barWidth, 0, barWidth, canvas.height);
+  });
+
+  document.getElementById("heatmapWrapper").scrollLeft = offset;
+  drawOverview(gcValues, zoom, offset);
+}
+
+function drawLegend() {
+  let canvas = document.getElementById("legendCanvas");
+  let ctx = canvas.getContext("2d");
+  let gradient = ctx.createLinearGradient(0, 0, 0, 150);
+  gradient.addColorStop(0, "red");
+  gradient.addColorStop(0.5, "green");
+  gradient.addColorStop(1, "blue");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// --- NEW OVERVIEW ---
+function drawOverview(gcValues, zoom, offset) {
+  let canvas = document.getElementById("overviewCanvas");
+  let ctx = canvas.getContext("2d");
+  let width = canvas.width, height = canvas.height;
+
+  ctx.clearRect(0, 0, width, height);
+
+  gcValues.forEach((gc, i) => {
+    let x = i / gcValues.length * width;
+    ctx.fillStyle = gcToColor(gc);
+    ctx.fillRect(x, 0, width / gcValues.length, height);
+  });
+
+  // Draw visible window box
+  let visibleBp = width * (document.getElementById("gcHeatmapCanvas").clientWidth / (gcValues.length * zoom));
+  let startRatio = offset / (gcValues.length * zoom);
+  let startX = startRatio * width;
+
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(startX, 0, visibleBp, height);
+}
+
+// Globals
+let zoomFactor = 1;
+let scrollOffset = 0;
+let currentGCData = [];
+
+// Input handler
+document.getElementById("analyzeBtn").addEventListener("click", () => {
+  let seq = cleanSequence(document.getElementById("seqInput").value);
+  if (!seq.length) {
+    alert("Please enter a valid DNA or RNA sequence!");
+    return;
+  }
+  let windowSize = parseInt(document.getElementById("windowSize").value);
+  if (windowSize > seq.length) {
+    alert("Window size must be smaller than sequence length!");
+    return;
+  }
+
+  let gcPercent = calcGC(seq);
+  document.getElementById("gcResult").textContent = `Overall GC%: ${gcPercent}%`;
+
+  currentGCData = calcSlidingGC(seq, windowSize);
+
+  // Chart.js plot
+  let ctx = document.getElementById("gcChart").getContext("2d");
+  if (window.gcChartInstance) window.gcChartInstance.destroy();
+  window.gcChartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: currentGCData.map((_, i) => i + 1),
+      datasets: [{
+        label: `GC% (window size = ${windowSize})`,
+        data: currentGCData,
+        borderColor: "#3aa95f",
+        fill: false,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { min: 0, max: 100 } }
+    }
+  });
+
+  zoomFactor = 1;
+  scrollOffset = 0;
+
+  drawHeatmap(currentGCData, zoomFactor, scrollOffset);
+  drawLegend();
+});
+
+// Zoom with mouse wheel (centered)
+document.getElementById("gcHeatmapCanvas").addEventListener("wheel", (e) => {
+  if (!currentGCData.length) return;
+  e.preventDefault();
+
+  let wrapper = document.getElementById("heatmapWrapper");
+  let rect = wrapper.getBoundingClientRect();
+  let pointerX = e.clientX - rect.left + wrapper.scrollLeft;
+
+  let zoomCenterRatio = pointerX / (currentGCData.length * zoomFactor);
+
+  if (e.deltaY < 0) zoomFactor = Math.min(20, zoomFactor + 0.5);
+  else zoomFactor = Math.max(1, zoomFactor - 0.5);
+
+  let newOffset = zoomCenterRatio * (currentGCData.length * zoomFactor) - pointerX;
+  newOffset = Math.max(0, newOffset);
+
+  drawHeatmap(currentGCData, zoomFactor, newOffset);
+});
+
+// Drag overview window to scroll
+let isDragging = false;
+document.getElementById("overviewCanvas").addEventListener("mousedown", (e) => {
+  if (!currentGCData.length) return;
+  isDragging = true;
+  moveTo(e);
+});
+document.addEventListener("mouseup", () => { isDragging = false; });
+document.addEventListener("mousemove", (e) => { if (isDragging) moveTo(e); });
+
+function moveTo(e) {
+  let canvas = document.getElementById("overviewCanvas");
+  let rect = canvas.getBoundingClientRect();
+  let x = e.clientX - rect.left;
+  let ratio = x / canvas.width;
+  scrollOffset = ratio * (currentGCData.length * zoomFactor) - (document.getElementById("heatmapWrapper").clientWidth / 2);
+  scrollOffset = Math.max(0, scrollOffset);
+  drawHeatmap(currentGCData, zoomFactor, scrollOffset);
+}
+</script>
+</div>
+  <div id="chatbox-button">💬</div>
+
+<div id="chatbox">
+  <div class="chatbox-header">
+    <span data-translate="chatbox1">Contact Me</span>
+    <button id="close-chat">✖</button>
+  </div>
+  <div class="chatbox-body">
+    <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+    <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+    <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+    <button id="send-message" data-translate="chatbox5">Send</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+  <script src="translate.js"></script>
+  <script src="theme-toggle.js"></script>
+
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280",initial-scale=1" />
+  <title>Protein Molecular Weight & pI Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chatbox.css">
+  <link rel="stylesheet" href="style_lang.css">
+  <link rel="stylesheet" href="style_footer.css">
+  <link rel="stylesheet" href="drop_style.css">
+  <link rel="stylesheet" href="style_lang.css">
+  <style>
+    .calc-container{max-width:900px;margin:28px auto;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    textarea{width:100%;min-height:120px;font-family:monospace;font-size:14px}
+    .result-card{padding:12px;border-radius:8px;margin-top:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:6px;border-bottom:1px solid #e6e6ef;text-align:left}
+  </style>
+
+  </head>
+<body>
+  <div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+  <div class="calc-container">
+    <h1>
+      <img src="Logo.png" alt="Logo" class="logo">
+  <span class="half1" data-translate="pI_title">Protein Molecular Weight &amp; pI Calculator</span>
+  <span class="half2">| Momchi's Genetics Tools™</span>
+</h1>
+
+    <p class="muted" data-translate="pI_text1">Paste an amino-acid sequence (one-letter codes). The tool computes estimated molecular weight, predicted isoelectric point (pI), and plots net charge vs pH.</p>
+
+    <label for="seq" data-translate="pI_text2">Amino acid sequence</label>
+    <textarea id="seq" data-translate="pI_text3" placeholder="e.g. MKTLLILTCLVAV..."> </textarea>
+    <div style="margin-top:8px;display:flex;gap:8px;">
+      <button id="calc" class="btn" data-translate="pI_text4">Calculate</button>
+      <button id="clear" class="btn" data-translate="pI_text5">Clear</button>
+      <label class="muted" style="align-self:center;margin-left:auto" data-translate="pI_text6">Valid letters: ACDEFGHIKLMNPQRSTVWY (case-insensitive)</label>
+    </div>
+
+    <div id="output" style="margin-top:18px;display:grid;grid-template-columns:1fr 320px;gap:16px">
+      <div>
+        <div class="result-card">
+          <h3 data-translate="pI_text7">Results</h3>
+          <p><strong data-translate="pI_text8">Molecular weight:</strong> <span id="mw">—</span> Da</p>
+          <p><strong data-translate="pI_text9">Estimated pI:</strong> <span id="pI">—</span></p>
+          <p><strong data-translate="pI_text10">Length:</strong> <span id="length">—</span> aa</p>
+          <p><strong data-translate="pI_text11">Charge at pH 7.0:</strong> <span id="charge7">—</span></p>
+          <div style="margin-top:8px">
+            <label for="phrange" class="muted" data-translate="pI_text12">Compute net charge at pH:</label>
+            <input id="ph" type="number" step="0.1" min="0" max="14" value="7" style="width:100px"/>
+            <button id="calcPh" class="btn" data-translate="pI_text13">Compute</button>
+            <span id="chargePh" style="margin-left:12px"></span>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <h3 data-translate="pI_text14">Net Charge vs pH</h3>
+          <canvas id="chargeChart"></canvas>
+        </div>
+
+        <div class="result-card">
+          <h3 data-translate="pI_text15">Amino acid counts</h3>
+          <div id="countsWrap" data-translate="pI_text16">Paste a sequence and press Calculate.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="result-card">
+          <h3 data-translate="pI_text17">Notes &amp; export</h3>
+          <p class="muted" data-translate="pI_text18">This calculator uses standard residue average masses and typical pKa values. It estimates pI by finding the pH where net charge ≈ 0.</p>
+          <div style="margin-top:8px">
+            <button id="copyRes" class="btn" data-translate="pI_text19">Copy summary</button>
+            <button id="download" class="btn" data-translate="pI_text20">Download CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ <hr>
+    <p data-translate="pI_text21">This tool analyzes an amino acid sequence to calculate its estimated molecular weight, isoelectric point (pI), and amino acid composition. It also visualizes the protein’s net charge across pH 0–14 with a charge–pH graph, helping identify the pI and charge behavior under different pH conditions.</p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const residueMass={A:89.0935,R:174.2017,N:132.1184,D:133.1032,C:121.1590,E:147.1299,Q:146.1451,G:75.0669,H:155.1546,I:131.1736,L:131.1736,K:146.1882,M:149.2124,F:165.1900,P:115.1310,S:105.0930,T:119.1197,W:204.2262,Y:181.1894,V:117.1469};
+const waterMass=18.01528;
+const pKa={Nterm:9.69,Cterm:2.34,sidechains:{C:8.18,D:3.65,E:4.25,H:6.00,K:10.53,R:12.48,Y:10.07}};
+function sanitizeSequence(s){return(s||"").toUpperCase().replace(/[^A-Z]/g,'').replace(/[BJOUXZ]/g,'');}
+function countResidues(seq){const c={};for(const r in residueMass)c[r]=0;for(const ch of seq)if(ch in c)c[ch]++;return c;}
+function computeMW(seq){const c=countResidues(seq);let s=0,t=0;for(const r in c){if(c[r]>0){s+=residueMass[r]*c[r];t+=c[r];}}return t===0?0:s+waterMass;}
+function chargeAtPH(seq,pH){const c=countResidues(seq);const posN=1/(1+Math.pow(10,pH-pKa.Nterm));const negC=1/(1+Math.pow(10,pKa.Cterm-pH));const posK=c.K*c.K?c.K*(1/(1+Math.pow(10,pH-pKa.sidechains.K))):0;const posR=c.R?c.R*(1/(1+Math.pow(10,pH-pKa.sidechains.R))):0;const posH=c.H?c.H*(1/(1+Math.pow(10,pH-pKa.sidechains.H))):0;const negD=c.D?c.D*(1/(1+Math.pow(10,pKa.sidechains.D-pH))):0;const negE=c.E?c.E*(1/(1+Math.pow(10,pKa.sidechains.E-pH))):0;const negCys=c.C?c.C*(1/(1+Math.pow(10,pKa.sidechains.C-pH))):0;const negY=c.Y?c.Y*(1/(1+Math.pow(10,pKa.sidechains.Y-pH))):0;return (posN+posK+posR+posH)-(negC+negD+negE+negCys+negY);}
+function estimatePI(seq){let low=0,high=14,mid=7;for(let i=0;i<60;i++){mid=(low+high)/2;const ch=chargeAtPH(seq,mid);if(Math.abs(ch)<1e-4)break;if(ch>0)low=mid;else high=mid;}return parseFloat(mid.toFixed(3));}
+function renderCountsTable(counts){let h='<table><thead><tr><th>Residue</th><th>Count</th></tr></thead><tbody>';for(const r in counts)h+=`<tr><td>${r}</td><td>${counts[r]}</td></tr>`;return h+'</tbody></table>';}
+const seqEl=document.getElementById('seq');const calcBtn=document.getElementById('calc');const clearBtn=document.getElementById('clear');const mwEl=document.getElementById('mw');const pIEl=document.getElementById('pI');const lengthEl=document.getElementById('length');const countsWrap=document.getElementById('countsWrap');const charge7El=document.getElementById('charge7');const phInput=document.getElementById('ph');const calcPhBtn=document.getElementById('calcPh');const chargePhSpan=document.getElementById('chargePh');const copyBtn=document.getElementById('copyRes');const downloadBtn=document.getElementById('download');
+let chart;
+function plotChargeCurve(seq){const labels=[],data=[];for(let p=0;p<=14;p+=0.2){labels.push(p.toFixed(1));data.push(chargeAtPH(seq,p));}const ctx=document.getElementById('chargeChart').getContext('2d');if(chart)chart.destroy();chart=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{label:'Net charge',data:data,borderColor:'green',backgroundColor:'rgba(0,128,0,0.3)',borderWidth:2,fill:false,tension:0.1}]},options:{scales:{x:{title:{display:true,text:'pH'}},y:{title:{display:true,text:'Net charge'}}}}});}
+calcBtn.addEventListener('click',()=>{const seq=sanitizeSequence(seqEl.value);if(!seq.length){alert('Please paste an amino-acid sequence.');return;}const counts=countResidues(seq);const mw=computeMW(seq);const pI=estimatePI(seq);const ch7=chargeAtPH(seq,7.0);mwEl.textContent=mw.toFixed(4);pIEl.textContent=pI;lengthEl.textContent=seq.length;charge7El.textContent=ch7.toFixed(4);countsWrap.innerHTML=renderCountsTable(counts);plotChargeCurve(seq);});
+clearBtn.addEventListener('click',()=>{seqEl.value='';mwEl.textContent=pIEl.textContent=lengthEl.textContent=charge7El.textContent='—';countsWrap.innerHTML='Paste a sequence and press Calculate.';if(chart)chart.destroy();});
+calcPhBtn.addEventListener('click',()=>{const seq=sanitizeSequence(seqEl.value);if(!seq.length){alert('Paste sequence first');return;}const ph=parseFloat(phInput.value);if(isNaN(ph)||ph<0||ph>14){alert('pH must be 0–14');return;}chargePhSpan.textContent=`Net charge at pH ${ph.toFixed(2)}: ${chargeAtPH(seq,ph).toFixed(4)}`;});
+copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(`MW: ${mwEl.textContent} Da\npI: ${pIEl.textContent}`).then(()=>alert('Copied summary'));});
+downloadBtn.addEventListener('click',()=>{const seq=sanitizeSequence(seqEl.value);if(!seq.length){alert('Paste sequence first');return;}const counts=countResidues(seq);let csv='Residue,Count\n';for(const r in counts)csv+=`${r},${counts[r]}\n`;const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='aa_counts.csv';a.click();URL.revokeObjectURL(url);});
+</script>
+<div id="chatbox-button">💬</div>
+
+<div id="chatbox">
+  <div class="chatbox-header">
+    <span data-translate="chatbox1">Contact Me</span>
+    <button id="close-chat">✖</button>
+  </div>
+  <div class="chatbox-body">
+    <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+    <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+    <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+    <button id="send-message" data-translate="chatbox5">Send</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+
+  <script src="theme-toggle.js"></script>
+  <script src="translate.js"></script>
+  <script src="translate.js"></script>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

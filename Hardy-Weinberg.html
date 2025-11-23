@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280",initial-scale=1" />
+  <title>Hardy–Weinberg & Allele Frequency Calculator — Optimized</title>
+  <meta name="description" content="Hardy–Weinberg equilibrium calculator for 2+ alleles with chi-square test, heatmap, export, dark mode, validation." />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chatbox.css">
+  <link rel="stylesheet" href="style_lang.css">
+  <link rel="stylesheet" href="style_footer.css">
+  <link rel="stylesheet" href="drop_style.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+  --bg:#ffffff;
+  --panel:#f7f7fb;
+  --text:#030303;
+  --muted:#6b7280;
+
+  --accent:#3aa95f;
+
+  --success:#2a9d8f;
+  --danger:#e76f51;
+
+  --card-radius:12px;
+  --gap:12px;
+}
+
+[data-theme="dark"]{
+  --bg:#0b1220;
+  --panel:#292828;
+  --text:#FFFFFF;
+  --muted:#9aa7b3;
+
+  /* Dark theme green accent */
+  --accent:#3ed17e;
+
+  --success:#66d2b5;
+  --danger:#ff8b7b;
+}
+
+*{ box-sizing:border-box }
+html,body{
+  height:100%;
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+  color:var(--text);
+  background:var(--bg);
+}
+
+.container{
+  max-width:1100px;
+  margin:28px auto;
+  padding:18px;
+  gap:16px;
+  display:flex;
+  flex-direction:column;
+}
+
+h1,h2,h3{ margin:0 0 8px 0 }
+.muted{ color:var(--muted) }
+
+.controls{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+select,input[type=number],input[type=text]{
+  padding:8px;
+  border-radius:8px;
+  border:1px solid rgba(0,0,0,0.08);
+  min-width:80px;
+}
+
+[data-theme="dark"] select,
+[data-theme="dark"] input[type=number],
+[data-theme="dark"] input[type=text]{
+  border:1px solid rgba(255,255,255,0.06);
+  background:transparent;
+  color:var(--text);
+}
+
+.btn{
+  background:var(--accent);
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+}
+
+.btn.secondary{
+  background:transparent;
+  color:var(--accent);
+  border:1px solid rgba(0,0,0,0.06);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  margin-top:12px;
+}
+@media(min-width:900px){
+  .grid{ grid-template-columns:1fr 420px }
+}
+
+.card{
+  background:var(--panel);
+  padding:14px;
+  border-radius:var(--card-radius);
+  box-shadow:0 4px 18px rgba(2,6,23,0.04);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+table thead th{
+  background:transparent;
+  text-align:left;
+  padding:8px 6px;
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  color:var(--muted);
+}
+table tbody td{
+  padding:6px;
+  border-bottom:1px dashed rgba(0,0,0,0.04);
+}
+
+.small{ font-size:13px }
+
+.inline-inputs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.label-row input{ width:92px }
+
+.error{
+  outline:2px solid var(--danger);
+  background:rgba(231,111,81,0.06);
+}
+.warning{
+  color:var(--danger);
+  font-weight:600;
+}
+
+.chart-wrap{ height:340px }
+
+.actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.right{ margin-left:auto }
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.input-group select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.12);
+  font-size: 14px;
+  background: var(--panel);
+}
+
+  </style>
+</head>
+<body data-theme="light">
+  <div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+    <p></p>
+    <p></p>
+    <h1>
+    <img src="Logo.png" alt="Logo" class="logo" />
+    <span class="half1" data-translate="calculator4">Hardy–Weinberg Calculator</span>
+    <span class="half2">| Momchi's Genetics Tools™</span>
+   
+  </h1>
+   
+    <p class="muted" data-translate="Hardy_text1">Supports 2+ alleles. Enter allele labels and genotype counts or percentages. Computes allele frequencies, expected genotype frequencies, χ² test (accurate p-value)and charts. Export results.</p>
+
+    <div class="controls">
+      <div class="input-group">
+  <label for="numAlleles" data-translate="Hardy_text2">Number of alleles</label>
+  <select id="numAlleles" aria-label="Number of alleles">
+    <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+  </select>
+</div>
+
+      <button id="gen" class="btn" title="Generate inputs" data-translate="Hardy_text3">Generate inputs</button>
+
+      <div class="input-group">
+  <label for="inputMode" data-translate="Hardy_text4">Input mode</label>
+  <select id="inputMode" aria-label="Input mode">
+    <option value="counts" data-translate="Hardy_text5">Counts</option>
+    <option value="percent" data-translate="Hardy_text6">Percentages</option>
+    <option value="alleleFreq" data-translate="Hardy_text7">Allele frequencies</option>
+  </select>
+</div>
+      <label class="right small muted" data-translate="Hardy_text8">Degrees of freedom: <strong id="df">—</strong></label>
+
+      </div>
+
+    <div id="formArea">
+      <div id="alleleLabels" class="card label-row" style="margin-top:12px"></div>
+      <div id="matrixWrap" style="margin-top:12px"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;margin-top:12px">
+      <div class="actions">
+        <button id="calc" class="btn" data-translate="Hardy_text9">Calculate</button>
+        <button id="reset" class="btn secondary" data-translate="Hardy_text10">Reset</button>
+        <button id="normalize" class="btn secondary" title="Normalize percentage inputs to sum to 100%" data-translate="Hardy_text11">Normalize</button>
+      </div>
+      <div class="small muted right" data-translate="Hardy_text12">Total individuals: <strong id="N">—</strong></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3 data-translate="Hardy_text13">Results</h3>
+        <p class="muted small" id="interpret">—</p>
+
+        <div style="margin-top:8px" id="alleleFreqs">—</div>
+
+        <div style="margin-top:10px">
+          <h4 class="small" data-translate="Hardy_text14">Genotype table (Observed vs Expected)</h4>
+          <div id="genTable">—</div>
+        </div>
+
+        <div style="margin-top:10px">
+          <h4 class="small" data-translate="Hardy_text15">Chi-square test</h4>
+          <p>χ² = <strong id="chi">—</strong> | df = <strong id="df2">—</strong> | p = <strong id="pval">—</strong></p>
+          <div id="extras" class="muted small"></div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+          <button id="downloadCSV" class="btn secondary" data-translate="Hardy_text16">Download CSV</button>
+          <button id="copyFreqs" class="btn secondary" data-translate="Hardy_text17">Copy frequencies</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 data-translate="Hardy_text18">Visual</h3>
+        <div class="chart-wrap">
+          <canvas id="hweChart"></canvas>
+        </div>
+        <p class="muted small" data-translate="Hardy_text19">Bar chart compares observed vs expected genotype frequencies under HWE.</p>
+
+        
+  
+</div>
+          
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="saveChart" class="btn" data-translate="Hardy_text20">Save chart PNG</button>
+        </div>
+         
+           <p data-translate="Hardy_text21">This calculator computes allele frequencies, expected Hardy–Weinberg genotype proportions, and chi-square statistics for any number of alleles. Users enter genotype counts or percentages, and the tool automatically calculates allele frequencies, observed vs. expected genotypes, and statistical significance of deviation from HWE. Results are displayed in clean tables and a bar chart comparing observed and expected genotype distributions. It provides an intuitive, responsive interface suitable for teaching, research, and quick population-genetics analyses.</p>
+        
+      </div>
+    </div>
+
+    
+
+
+<script>
+// -------------------- Utilities --------------------
+function createEl(tag, attrs){const el=document.createElement(tag); if(attrs) for(const k in attrs) el.setAttribute(k, attrs[k]); return el}
+function combinationsCached(n){ const key = `c_${n}`; if (!combinationsCached.cache) combinationsCached.cache = {}; if (combinationsCached.cache[key]) return combinationsCached.cache[key]; const out=[]; for(let i=0;i<n;i++) for(let j=i;j<n;j++) out.push([i,j]); combinationsCached.cache[key]=out; return out }
+function fmt(n, d=4){ return (Number.isFinite(n) ? Number(n).toFixed(d) : '—') }
+
+// Accurate chi-square p-value via regularized gamma (Lanczos approximation for logGamma)
+function logGamma(z){ const cof=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.001208650973866179,-0.000005395239384953]; let x=z; let y=x; let tmp=x+5.5; tmp-= (x+0.5)*Math.log(tmp); let ser=1.000000000190015; for(let j=0;j<cof.length;j++){ y+=1; ser+= cof[j]/y } return -tmp+Math.log(2.5066282746310005*ser/x) }
+function lowerIncompleteGammaSeries(s,x){ // returns P(s,x) * Gamma(s)
+  let sum=1/x; // not ideal for very small x but ok here
+  let term=1/x; for(let k=1;k<100;k++){ term *= x/(s+k); sum += term; if(term < 1e-12) break } return Math.pow(x,s)*Math.exp(-x)*sum }
+function regularizedGammaP(s,x){ if(x<0 || s<=0) return NaN; if(x===0) return 0; // use series for x < s+1
+  if (x < s + 1){ const lg = lowerIncompleteGammaSeries(s,x); const g = Math.exp(logGamma(s)); return lg / g } // continued fraction for x >= s+1 (use aprox via complement)
+  // Use continued fraction (Lentz) to compute Q = 1 - P, then return 1-Q
+  let a0=1, b0=x+1-s, f=a0/b0; let C=1/f, D=0; for(let i=1;i<200;i++){ let an = i*(s - i); b0 += 2; D = b0 + an*D; if (D===0) D=1e-30; C = b0 + an/C; if (C===0) C=1e-30; D = 1/D; let delta = C*D; f *= delta; if(Math.abs(delta - 1) < 1e-12) break } const g = Math.exp(logGamma(s)); const Q = Math.exp(-x + s*Math.log(x) - logGamma(s)) * f; // Q is approx upper incomplete / Gamma
+  const P = 1 - Q; return P }
+function chiSquarePValue(chi2, df){ const p = 1 - regularizedGammaP(df/2, chi2/2); return Math.min(1, Math.max(0, p)) }
+
+// -------------------- DOM references --------------------
+const numSel = document.getElementById('numAlleles');
+const genBtn = document.getElementById('gen');
+const matrixWrap = document.getElementById('matrixWrap');
+const alleleLabelsDiv = document.getElementById('alleleLabels');
+const calcBtn = document.getElementById('calc');
+const resetBtn = document.getElementById('reset');
+const inputModeSel = document.getElementById('inputMode');
+const Nspan = document.getElementById('N');
+const chiSpan = document.getElementById('chi');
+const dfSpan = document.getElementById('df');
+const df2Span = document.getElementById('df2');
+const pvalSpan = document.getElementById('pval');
+const alleleFreqsDiv = document.getElementById('alleleFreqs');
+const genTableDiv = document.getElementById('genTable');
+const interpretP = document.getElementById('interpret');
+const normalizeBtn = document.getElementById('normalize');
+const downloadCSV = document.getElementById('downloadCSV');
+const copyFreqs = document.getElementById('copyFreqs');
+const toggleTheme = document.getElementById('toggleTheme');
+const saveChart = document.getElementById('saveChart');
+const saveHeatmap = document.getElementById('saveHeatmap');
+const heatmapDiv = document.getElementById('heatmap');
+let chart = null;
+
+// -------------------- Input generation --------------------
+function generateInputs(){
+  const k = parseInt(numSel.value,10);
+  alleleLabelsDiv.innerHTML = '';
+  matrixWrap.innerHTML = '';
+  dfSpan.textContent = (k*(k-1)/2).toString();
+
+  // allele labels
+  const labelRow = createEl('div'); labelRow.className = 'inline-inputs';
+  labelRow.innerHTML = '<strong>Alleles:</strong>';
+  for(let i=0;i<k;i++){
+    const inp = createEl('input',{type:'text',value:`A${i+1}`, 'data-idx':i, 'aria-label':`Allele ${i+1}`});
+    labelRow.appendChild(inp);
+  }
+  alleleLabelsDiv.appendChild(labelRow);
+
+  const mode = inputModeSel.value;
+
+  if(mode === 'alleleFreq'){
+    // show allele frequency inputs
+    const table = createEl('table');
+    const thead = createEl('thead'); thead.innerHTML = '<tr><th>Allele</th><th>Frequency</th></tr>';
+    table.appendChild(thead);
+    const tbody = createEl('tbody');
+    for(let i=0;i<k;i++){
+      const tr = createEl('tr');
+      const t1 = createEl('td'); t1.textContent = `A${i+1}`;
+      const t2 = createEl('td'); const inp = createEl('input',{type:'number',min:'0',max:'1',step:'0.0001',value:'0', 'data-i':i}); inp.style.width='120px';
+      t2.appendChild(inp); tr.append(t1,t2); tbody.appendChild(tr);
+    }
+    table.appendChild(tbody); matrixWrap.appendChild(table);
+  } else {
+    const combos = combinationsCached(k);
+    const table = createEl('table');
+    const thead = createEl('thead'); thead.innerHTML = `<tr><th>Genotype</th><th>${mode==='counts' ? 'Count' : '%'}</th></tr>`;
+    table.appendChild(thead);
+    const tbody = createEl('tbody');
+    combos.forEach(pair=>{
+      const tr = createEl('tr');
+      const td1 = createEl('td'); td1.textContent = `A${pair[0]+1}/A${pair[1]+1}`; td1.className='genoLabel';
+      const td2 = createEl('td'); const inp = createEl('input',{type:'number',min:'0',step: mode==='counts'? '1' : '0.01', value:'0','data-i':pair[0],'data-j':pair[1]}); inp.style.width='120px'; td2.appendChild(inp);
+      tr.append(td1,td2); tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); matrixWrap.appendChild(table);
+  }
+
+  // wire up label updates
+  alleleLabelsDiv.querySelectorAll('input').forEach(inp=>inp.addEventListener('input', updateGenotypeLabels));
+  matrixWrap.querySelectorAll('input').forEach(inp=>inp.addEventListener('input', validateInputs));
+}
+
+function updateGenotypeLabels(){
+  const alleleNames = Array.from(alleleLabelsDiv.querySelectorAll('input')).map(i=>i.value.trim()||i.placeholder);
+  const rows = matrixWrap.querySelectorAll('.genoLabel');
+  const combos = combinationsCached(alleleNames.length);
+  rows.forEach((td,idx)=>{ const [i,j]=combos[idx]; td.textContent = `${alleleNames[i]}/${alleleNames[j]}` });
+}
+
+// -------------------- Validation & normalization --------------------
+function validateInputs(){
+  const mode = inputModeSel.value;
+  let invalid=false;
+  matrixWrap.querySelectorAll('input[type=number]').forEach(inp=>{ inp.classList.remove('error'); if(mode==='counts'){ if(Number(inp.value) < 0 || !Number.isFinite(Number(inp.value))) { inp.classList.add('error'); invalid=true } } else if(mode==='percent'){ if(Number(inp.value) < 0 || Number(inp.value) > 100 || !Number.isFinite(Number(inp.value))) { inp.classList.add('error'); invalid=true } } else if(mode==='alleleFreq'){ if(Number(inp.value) < 0 || Number(inp.value) > 1 || !Number.isFinite(Number(inp.value))) { inp.classList.add('error'); invalid=true } } });
+  calcBtn.disabled = invalid;
+}
+
+function normalizePercentages(){ const mode = inputModeSel.value; if(mode!=='percent') return; const inputs = Array.from(matrixWrap.querySelectorAll('input[type=number]')); let sum = inputs.reduce((s,i)=>s+ (Number(i.value)||0),0); if(sum===0) return; inputs.forEach(i=> i.value = (Number(i.value)||0) * 100 / sum); validateInputs(); }
+
+// -------------------- Compute --------------------
+function compute(){
+  const labels = Array.from(alleleLabelsDiv.querySelectorAll('input')).map(i=> i.value.trim() || i.placeholder);
+  const k = labels.length; const mode = inputModeSel.value;
+
+  // collect inputs into map keyed i_j
+  const combos = combinationsCached(k);
+  const countsMap = new Map();
+  let totalIndividuals = 0; // N
+
+  if(mode === 'alleleFreq'){
+    const freqs = Array.from(matrixWrap.querySelectorAll('input')).map(i=> Math.max(0,Number(i.value)||0));
+    const sumf = freqs.reduce((a,b)=>a+b,0);
+    if(sumf <= 0) { alert('Enter non-zero allele frequencies.'); return }
+    const normalized = freqs.map(f=> f/sumf);
+    // compute expected genotype freqs
+    const expectedFreq = {};
+    combos.forEach(([i,j])=> expectedFreq[`${i}_${j}`] = i===j ? normalized[i]*normalized[i] : 2*normalized[i]*normalized[j]);
+    // display allele table and expected only
+    showResults({N:'—', alleleCounts:normalized.map(v=> v*2), freqs: normalized, combos, counts: combos.map(([i,j])=>({i,j,v:0})), expectedFreq, chi2:null, pval:null, df:k*(k-1)/2});
+    return;
+  }
+
+  // counts or percent input
+  const inputs = Array.from(matrixWrap.querySelectorAll('input[type=number]'));
+  if(inputs.length===0){ alert('No inputs found. Generate inputs first.'); return }
+
+  if(mode === 'percent'){
+    const percentSum = inputs.reduce((s,i)=> s + (Number(i.value)||0), 0);
+    if(Math.abs(percentSum - 100) > 1e-6){ if(!confirm(`Percentages sum to ${percentSum.toFixed(2)}%. Do you want to normalize to 100%?`)) return; inputs.forEach(i=> i.value = (Number(i.value)||0) * 100 / percentSum); }
+    // set N = 100 (percent unit)
+    totalIndividuals = 100;
+  } else {
+    totalIndividuals = inputs.reduce((s,i)=> s + (Number(i.value)||0), 0);
+    if(totalIndividuals === 0){ alert('Enter nonzero counts.'); return }
+  }
+
+  // build counts
+  const counts = [];
+  inputs.forEach(inp=>{ const i = Number(inp.dataset.i), j = Number(inp.dataset.j); const v = Number(inp.value)||0; counts.push({i,j,v}); countsMap.set(`${i}_${j}`, v); });
+
+  // allele counts (each homozygote contributes 2)
+  const alleleCounts = Array(k).fill(0);
+  counts.forEach(c=>{ if(c.i===c.j) alleleCounts[c.i] += 2*c.v; else { alleleCounts[c.i] += c.v; alleleCounts[c.j] += c.v } });
+  const totalAlleles = alleleCounts.reduce((a,b)=>a+b,0);
+  const freqs = alleleCounts.map(c=> c/totalAlleles);
+
+  // expected genotype frequencies and counts
+  const expectedFreq = {}; const expectedCounts = {};
+  combos.forEach(([i,j])=>{ const key=`${i}_${j}`; expectedFreq[key] = (i===j ? freqs[i]*freqs[i] : 2*freqs[i]*freqs[j]); expectedCounts[key] = expectedFreq[key] * (mode==='percent' ? totalIndividuals : totalIndividuals); });
+
+  // chi-square
+  let chi2 = 0; combos.forEach(([i,j])=>{ const key=`${i}_${j}`; const O = countsMap.get(key)||0; const E = expectedCounts[key]; if(E>0) chi2 += ((O - E)**2)/E; });
+  const df = k*(k-1)/2; const pval = chiSquarePValue(chi2, df);
+
+  showResults({N: totalIndividuals, alleleCounts, freqs, combos, counts, expectedCounts, expectedFreq, chi2, pval, df});
+}
+
+// -------------------- Display & Charts --------------------
+function showResults({N, alleleCounts, freqs, combos, counts, expectedCounts, expectedFreq, chi2, pval, df}){
+  Nspan.textContent = N;
+  chiSpan.textContent = chi2!=null ? fmt(chi2,4) : '—'; df2Span.textContent = df!=null ? df : '—'; pvalSpan.textContent = pval!=null ? (pval < 0.0001 ? '<0.0001' : pval.toPrecision(4)) : '—';
+
+  // interpret
+  if(pval!=null){ interpretP.textContent = pval < 0.05 ? 'Significant deviation from HWE (p < 0.05).' : 'No significant deviation from HWE (p ≥ 0.05).'; }
+
+  // allele table
+  let html = '<table><thead><tr><th>Allele</th><th>Count</th><th>Frequency</th></tr></thead><tbody>';
+  for(let i=0;i<freqs.length;i++){ html += `<tr><td>${(alleleLabelsDiv.querySelectorAll('input')[i].value||('A'+(i+1)))}</td><td>${fmt(alleleCounts[i],2)}</td><td>${fmt(freqs[i],4)}</td></tr>` }
+  html += '</tbody></table>';
+  alleleFreqsDiv.innerHTML = html;
+
+  // genotype table
+  let ghtml = '<table><thead><tr><th>Genotype</th><th>Observed</th><th>Expected</th><th>Δ (O−E)</th></tr></thead><tbody>';
+  combos.forEach(([i,j])=>{ const key=`${i}_${j}`; const O = (counts.find(c=>c.i===i&&c.j===j)?.v)||0; const E = expectedCounts ? expectedCounts[key] : 0; ghtml += `<tr><td>${getAlleleName(i)}/${getAlleleName(j)}</td><td>${fmt(O,4)}</td><td>${fmt(E,4)}</td><td>${fmt(O - E,4)}</td></tr>` });
+  ghtml += '</tbody></table>';
+  genTableDiv.innerHTML = ghtml;
+
+  // chart: observed vs expected frequencies (normalized)
+  const labelsGen = combos.map(([i,j])=> `${getAlleleName(i)}/${getAlleleName(j)}`);
+  const totalObs = counts.reduce((s,c)=>s+c.v,0) || 1;
+  const obsFreqs = combos.map(([i,j])=> (counts.find(c=>c.i===i&&c.j===j)?.v || 0) / totalObs);
+  const expFreqs = combos.map(([i,j])=> expectedFreq ? expectedFreq[`${i}_${j}`] : 0);
+
+  const ctx = document.getElementById('hweChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart = new Chart(ctx,{
+    type:'bar', data:{ labels: labelsGen, datasets:[ { label:'Observed', data: obsFreqs, backgroundColor: getCssVar('--accent') }, { label:'Expected (HWE)', data: expFreqs, backgroundColor: getCssVar('--success') } ] },
+    options: { responsive:true, plugins:{ legend:{ position:'top' } }, scales:{ y:{ beginAtZero:true, ticks:{ callback: v => (v*100).toFixed(0) + '%' } } } }
+  });
+
+  // heatmap (simple canvas draw)
+  drawHeatmap(combos, obsFreqs, expFreqs, labelsGen);
+}
+
+function getCssVar(name){ const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v || '#2467a0' }
+function getAlleleName(i){ return (alleleLabelsDiv.querySelectorAll('input')[i].value || `A${i+1}`) }
+
+function drawHeatmap(combos, obs, exp, labels){ heatmapDiv.innerHTML = ''; const canvas = createEl('canvas'); const size = Math.min(420, heatmapDiv.clientWidth - 20); canvas.width = size; canvas.height = size; heatmapDiv.appendChild(canvas); const ctx = canvas.getContext('2d'); const k = Math.ceil(Math.sqrt(combos.length)); const cell = Math.floor(size / k); ctx.clearRect(0,0,size,size); // background
+  // compute deviation intensity
+  combos.forEach((_, idx)=>{ const r = Math.floor(idx / k); const c = idx % k; const d = Math.abs(obs[idx] - exp[idx]); const intensity = Math.min(1, d / (Math.max(...exp) + 1e-6)); const col = lerpColor('#ffffff', getCssVar('--danger'), intensity); ctx.fillStyle = col; ctx.fillRect(c*cell, r*cell, cell-2, cell-2); });
+  // labels optional
+  ctx.fillStyle = getCssVar('--muted'); ctx.font = '12px Arial'; for(let i=0;i<Math.min(labels.length, k*cell); i++){ }
+}
+function lerpColor(a,b,t){ // simple hex lerp
+  const ah = hexToRgb(a), bh = hexToRgb(b); const rh = {r: Math.round(ah.r + (bh.r - ah.r)*t), g: Math.round(ah.g + (bh.g - ah.g)*t), b: Math.round(ah.b + (bh.b - ah.b)*t) }; return `rgb(${rh.r},${rh.g},${rh.b})` }
+function hexToRgb(hex){ if(hex.startsWith('rgb')){ const m = hex.match(/(\d+),\s*(\d+),\s*(\d+)/); return {r:+m[1],g:+m[2],b:+m[3]}} hex = hex.replace('#',''); if(hex.length===3) hex = hex.split('').map(s=>s+s).join(''); return { r: parseInt(hex.substring(0,2),16), g: parseInt(hex.substring(2,4),16), b: parseInt(hex.substring(4,6),16) } }
+
+// -------------------- Exports --------------------
+function csvFromResults(){ // take current table and create CSV
+  const rows = [];
+  // allele table
+  rows.push(['Allele','Count','Frequency']); const alleleRows = alleleFreqsDiv.querySelectorAll('tbody tr'); alleleRows.forEach(tr=>{ const tds = tr.querySelectorAll('td'); rows.push([tds[0].textContent, tds[1].textContent, tds[2].textContent]) });
+  rows.push([]);
+  // genotype table
+  rows.push(['Genotype','Observed','Expected']); const genoRows = genTableDiv.querySelectorAll('tbody tr'); genoRows.forEach(tr=>{ const tds = tr.querySelectorAll('td'); rows.push([tds[0].textContent, tds[1].textContent, tds[2].textContent]) });
+  return rows.map(r=> r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+}
+
+function downloadCSVFile(){ const csv = csvFromResults(); const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const a = createEl('a',{href:url,download:'hwe_results.csv'}); document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+
+function copyFrequencies(){ navigator.clipboard && navigator.clipboard.writeText(alleleFreqsDiv.innerText).then(()=> alert('Allele frequencies copied to clipboard'), ()=> alert('Could not copy')) }
+
+function saveChartPNG(){ if(!chart) return alert('No chart to save'); const url = chart.toBase64Image(); const a = createEl('a',{href:url,download:'hwe_chart.png'}); document.body.appendChild(a); a.click(); a.remove(); }
+
+function saveHeatmapPNG(){ const c = heatmapDiv.querySelector('canvas'); if(!c) return alert('No heatmap'); const url = c.toDataURL('image/png'); const a = createEl('a',{href:url,download:'hwe_heatmap.png'}); document.body.appendChild(a); a.click(); a.remove(); }
+
+// -------------------- Small helpers --------------------
+function bindUI(){ genBtn.addEventListener('click', ()=>{ generateInputs(); }); inputModeSel.addEventListener('change', ()=>{ generateInputs(); validateInputs(); }); normalizeBtn.addEventListener('click', normalizePercentages); calcBtn.addEventListener('click', compute); resetBtn.addEventListener('click', ()=>{ generateInputs(); alleleFreqsDiv.innerHTML = genTableDiv.innerHTML = '—'; Nspan.textContent = chiSpan.textContent = df2Span.textContent = pvalSpan.textContent = '—'; if(chart) chart.destroy(); }); downloadCSV.addEventListener('click', downloadCSVFile); copyFreqs.addEventListener('click', copyFrequencies); saveChart.addEventListener('click', saveChartPNG); saveHeatmap.addEventListener('click', saveHeatmapPNG);
+  toggleTheme.addEventListener('click', ()=>{ const el=document.body; el.setAttribute('data-theme', el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark' ) });
+}
+
+// init
+bindUI(); generateInputs(); validateInputs();
+</script>
+
+
+  <div id="chatbox-button">💬</div>
+
+<div id="chatbox">
+  <div class="chatbox-header">
+    <span>Contact Me</span>
+    <button id="close-chat">✖</button>
+  </div>
+  <div class="chatbox-body">
+    <input type="text" id="chat-name" placeholder="Your Name" />
+    <input type="email" id="chat-email" placeholder="Your Email" />
+    <textarea id="chat-message" placeholder="Type your message..."></textarea>
+    <button id="send-message">Send</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+  <script src="translate.js"></script>
+  <script src="theme-toggle.js"></script>
+ 
+</div>
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

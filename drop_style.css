@@ -1,0 +1,44 @@
+
+
+/* Main dropdown button (Tools, Calculators) */
+.dropbtn {
+  padding: 10px 16px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  display: none;
+  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  max-height: 300px;    
+  overflow-y: auto;
+}
+
+/* Show dropdown */
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+/* Dropdown links */
+.dropdown-content a {
+  padding: 10px 14px;
+  white-space: nowrap;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Hover effect */
+.dropdown-content a:hover {
+  background: rgba(0,0,0,0.05);
+  color: #3aa95f; /* green hover color */
+}

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="chatbox.css">
+  <link rel="stylesheet" href="style_footer.css">
+  <link rel="stylesheet" href="drop_style.css">
+  <link rel="stylesheet" href="style_lang.css">
+  <title>Primer Design Tool</title>
+  <style>
+input, select, button, textarea {
+margin: 6px 0; padding: 6px; font-size: 14px; width: 100%; box-sizing: border-box;
+}
+table { border-collapse: collapse; margin-top: 18px; width: 100%; text-align: center; }
+th, td { border: 1px solid #666; padding: 10px; min-width: 60px; }
+#legend div { display: inline-block; margin: 6px; padding: 6px 10px; border-radius: 6px; }
+.trait-block { border: 1px solid #444; padding: 10px; margin: 10px 0; border-radius: 6px; }
+.allele-row { display:flex; gap:12px; }
+.allele-col { flex:1; }
+label.small { font-size:12px; color:#bbb; display:block; margin-bottom:4px; }
+textarea { height:64px; }
+.hint { font-size:12px; margin-top:6px; }
+</style>
+</head>
+<body>
+  <div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+    <h1>
+      <img src="Logo.png" alt="Logo" class="logo">
+      <span class="half1" data-translate="tool14">Punnet square</span>
+      <span class="half2">| Momchi's Genetics Tools™</span>
+    </h1>
+    <hr>
+
+<label data-translate="Punnet_text17">Number of traits (1–6):</label>
+<input type="number" id="traitCount" min="2" max="6" value="2">
+<button id="setupTraits" data-translate="Punnet_text18">Set Traits</button>
+
+<div id="traitsContainer"></div>
+
+<div id="dominanceContainer"></div>
+
+<label data-translate="Punnet_text19">Display mode:</label>
+<select id="displayMode">
+  <option value="genotype" data-translate="Punnet_text20">Genotypes</option>
+  <option value="phenotype" data-translate="Punnet_text21">Phenotypes</option>
+</select>
+
+<button id="generateBtn" data-translate="Punnet_text22">Generate Punnett Square</button>
+
+<div id="punnettSquare"></div>
+
+<script>
+/* Color palette */
+const colors = [
+  "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4",
+  "#46f0f0", "#f032e6", "#9A6324", "#800000", "#469990",
+  "#000075", "#a9a9a9"
+];
+
+/* State */
+let traitInfo = []; 
+let dominanceConfig = {}; 
+let domSetupMade = false;
+
+/* Default allele placeholders per trait */
+const defaultAlleles = [
+  ["A", "a"], ["B", "b"], ["C", "c"],
+  ["D", "d"], ["E", "e"], ["F", "f"]
+];
+
+/* Ensure wrapper exists (create if missing) */
+(function ensureWrappers() {
+  if (!document.getElementById('punnettSquareWrapper')) {
+    const wrapper = document.createElement('div');
+    wrapper.id = 'punnettSquareWrapper';
+    wrapper.style.width = '100%';
+    wrapper.style.overflow = 'auto';
+    wrapper.style.padding = '10px';
+    const target = document.getElementById('punnettSquare');
+    if (target) {
+      target.parentNode.insertBefore(wrapper, target);
+      wrapper.appendChild(target);
+    } else {
+      // create punnettSquare if missing and append
+      const ps = document.createElement('div');
+      ps.id = 'punnettSquare';
+      wrapper.appendChild(ps);
+      document.body.appendChild(wrapper);
+    }
+  }
+  // create exportButtons container if missing
+  if (!document.getElementById('exportButtons')) {
+    const eb = document.createElement('div');
+    eb.id = 'exportButtons';
+    eb.style.marginTop = '12px';
+    eb.style.display = 'none';
+    // Buttons
+    const svgBtn = document.createElement('button');
+    svgBtn.id = 'downloadSVGBtn';
+    svgBtn.setAttribute("data-translate", "Punnet_text15");
+svgBtn.textContent = "Download SVG";
+    svgBtn.style.marginRight = '8px';
+    const pngBtn = document.createElement('button');
+    pngBtn.id = 'downloadPNGBtn';
+    pngBtn.setAttribute("data-translate", "Punnet_text16");
+pngBtn.textContent = "Download PNG";
+    eb.appendChild(svgBtn);
+    eb.appendChild(pngBtn);
+
+    // place after wrapper
+    const wrapper = document.getElementById('punnettSquareWrapper');
+    wrapper.parentNode.insertBefore(eb, wrapper.nextSibling);
+
+    // Attach handlers (will be defined later; safe to add listeners now)
+    svgBtn.addEventListener('click', downloadSVG);
+    pngBtn.addEventListener('click', downloadPNG);
+  }
+})();
+
+/* helper: unique array */
+function uniq(arr){ return Array.from(new Set(arr)); }
+
+/* UI: create trait input blocks */
+document.getElementById('setupTraits').addEventListener('click', () => {
+  const n = Number(document.getElementById('traitCount').value);
+  if (!n || n < 1 || n > 6) return alert("Choose between 1 and 6 traits.");
+
+  const container = document.getElementById('traitsContainer');
+  container.innerHTML = '';
+  traitInfo = [];
+  dominanceConfig = {};
+  domSetupMade = false;
+
+  for (let i = 1; i <= n; i++) {
+    const [maj, min] = defaultAlleles[i - 1];
+
+    container.innerHTML += `
+      <div class="trait-block" id="trait${i}">
+        <h4 data-translate="Punnet_text1">Trait ${i}</h4>
+        <div class="allele-row">
+          <div class="allele-col">
+            <label class="small" data-translate="Punnet_text2">Parent 1 — allele 1</label>
+            <input type="text" id="p1_t${i}_a1" placeholder="${maj}">
+            <label class="small" data-translate="Punnet_text3">Parent 1 — allele 2</label>
+            <input type="text" id="p1_t${i}_a2" placeholder="${min}">
+          </div>
+
+          <div class="allele-col">
+            <label class="small" data-translate="Punnet_text4">Parent 2 — allele 1</label>
+            <input type="text" id="p2_t${i}_a1" placeholder="${maj}">
+            <label class="small" data-translate="Punnet_text5">Parent 2 — allele 2</label>
+            <input type="text" id="p2_t${i}_a2" placeholder="${min}">
+          </div>
+        </div>
+        <div class="hint" data-translate="Punnet_text6">
+  Tip: allele names can be any short token.
+</div>
+      </div>
+    `;
+
+    traitInfo.push({ p1: ['', ''], p2: ['', ''], priority: '' });
+  }
+
+  document.getElementById('dominanceContainer').innerHTML = '';
+});
+
+/* Generate button */
+document.getElementById('generateBtn').addEventListener('click', () => {
+  const n = Number(document.getElementById('traitCount').value);
+  if (!n || n < 1 || n > 6) 
+    return alert("Set valid trait count and click 'Set Traits'.");
+
+  // read allele inputs
+  traitInfo = [];
+  for (let i = 1; i <= n; i++) {
+    const p1a1 = document.getElementById(`p1_t${i}_a1`)?.value.trim();
+    const p1a2 = document.getElementById(`p1_t${i}_a2`)?.value.trim();
+    const p2a1 = document.getElementById(`p2_t${i}_a1`)?.value.trim();
+    const p2a2 = document.getElementById(`p2_t${i}_a2`)?.value.trim();
+
+    if (!p1a1 || !p1a2 || !p2a1 || !p2a2)
+      return alert(`Please fill all allele boxes for trait ${i}.`);
+
+    traitInfo.push({
+      p1: [p1a1, p1a2],
+      p2: [p2a1, p2a2],
+      priority: p1a1
+    });
+  }
+
+  // First click builds dominance UI
+  if (!domSetupMade) {
+    buildDominanceUI();
+    domSetupMade = true;
+    return alert("Dominance controls created. Choose dominance settings and click Generate again.");
+  }
+
+  // Now parse dominance UI
+  if (!parseDominanceUI()) return;
+
+  const displayMode = (document.getElementById('displayMode')?.value) || "genotype";
+
+  const p1Gametes = cartesianProduct(traitInfo.map(t => t.p1));
+  const p2Gametes = cartesianProduct(traitInfo.map(t => t.p2));
+
+  const table = [];
+  const counts = {};
+  const legendColors = {};
+  let colorIdx = 0;
+
+  for (let g1 of p1Gametes) {
+    const row = [];
+    for (let g2 of p2Gametes) {
+      let genotype = '';
+      let phenotype = '';
+
+      for (let i = 0; i < n; i++) {
+        const allele1 = g1[i];
+        const allele2 = g2[i];
+        const dom = dominanceConfig[i];
+        const pair = [allele1, allele2];
+
+        const genoPair = formatGenotypePair(pair, dom, traitInfo[i].priority);
+        genotype += genoPair.join('');
+
+        const phenoToken = formatPhenotypePair(pair, dom, traitInfo[i].priority);
+        phenotype += phenoToken;
+      }
+
+      const displayValue = (displayMode === "phenotype") ? phenotype : genotype;
+
+      if (!(displayValue in legendColors)) {
+        legendColors[displayValue] = colors[colorIdx % colors.length];
+        colorIdx++;
+      }
+      counts[displayValue] = (counts[displayValue] || 0) + 1;
+
+      row.push({ display: displayValue, color: legendColors[displayValue] });
+    }
+    table.push(row);
+  }
+
+  renderTable(p1Gametes, p2Gametes, table, counts, legendColors);
+  domSetupMade = false;
+});
+
+/* ----- Helpers ----- */
+
+function cartesianProduct(arrOfPairs) {
+  return arrOfPairs.reduce((acc, pair) => {
+    const out = [];
+    for (const prefix of acc) {
+      for (const a of pair) out.push(prefix + a);
+    }
+    return out;
+  }, ['']);
+}
+
+function buildDominanceUI() {
+  const container = document.getElementById('dominanceContainer');
+  container.innerHTML = '<h3 data-translate="Punnet_text7">Dominance Settings</h3>';
+  dominanceConfig = {};
+
+  traitInfo.forEach((t, i) => {
+    const union = uniq([...t.p1, ...t.p2]);
+
+    if (union.length === 1) {
+      container.innerHTML += `
+        <div class="trait-block"><strong data-translate="Punnet_text8">Trait ${i + 1}:</strong>
+<span data-translate="Punnet_text9">single allele (X). Dominance not applicable.</span></div>`;
+      dominanceConfig[i] = null;
+    }
+    else if (union.length === 2) {
+      const [u0, u1] = union;
+      container.innerHTML += `
+        <div class="trait-block">
+          <strong>Trait ${i + 1}</strong>
+          <label class="small" data-translate="Punnet_text10">
+  Choose dominant allele (or None):
+</label>
+          <select id="dom_simple_${i}">
+            <option value="none" data-translate="Punnet_text11">None</option>
+            <option value="${u0}">${u0}</option>
+            <option value="${u1}">${u1}</option>
+          </select>
+        </div>`;
+      dominanceConfig[i] = null;
+    }
+    else {
+      container.innerHTML += `
+        <div class="trait-block">
+          <strong>Trait ${i + 1}</strong>
+          <label class="small" data-translate="Punnet_text12">
+  Advanced dominance rules (comma-separated).
+</label>
+          <textarea id="dom_adv_${i}" placeholder="Examples: A>a, M>A, M none A"></textarea>
+          <div class="hint" data-translate="Punnet_text13">
+  Use > or 'none' to indicate dominance. Rules apply only when both alleles match.
+</div>
+        </div>`;
+      dominanceConfig[i] = null;
+    }
+  });
+}
+
+function parseDominanceUI() {
+  for (let i = 0; i < traitInfo.length; i++) {
+    const simple = document.getElementById(`dom_simple_${i}`);
+    const adv = document.getElementById(`dom_adv_${i}`);
+
+    if (!simple && !adv) {
+      dominanceConfig[i] = null;
+      continue;
+    }
+
+    if (simple) {
+      const val = simple.value;
+      if (val === "none") dominanceConfig[i] = null;
+      else dominanceConfig[i] = { type: "simple", dominant: val };
+    }
+
+    else if (adv) {
+      const text = adv.value.trim();
+      if (!text) {
+        dominanceConfig[i] = null;
+        continue;
+      }
+
+      const ruleTokens = text.split(',').map(s => s.trim()).filter(Boolean);
+      const rules = [];
+
+      for (const tok of ruleTokens) {
+        const m1 = tok.match(/^(.+?)\s*>\s*(.+)$/);
+        const m2 = tok.match(/^(.+?)\s+none\s+(.+)$/i);
+
+        if (m1) rules.push({ dom: m1[1].trim(), rec: m1[2].trim() });
+        else if (m2) rules.push({ dom: m2[1].trim(), rec: m2[2].trim() });
+        else return alert(`Could not parse advanced rule "${tok}" for trait ${i + 1}.`);
+      }
+
+      dominanceConfig[i] = { type: 'advanced', rules };
+    }
+  }
+  return true;
+}
+
+function findDominantForPair(pair, domConfig) {
+  if (!domConfig) return null;
+
+  if (domConfig.type === "simple") {
+    const dom = domConfig.dominant;
+    return pair.includes(dom) ? dom : null;
+  }
+
+  if (domConfig.type === "advanced") {
+    for (const r of domConfig.rules) {
+      if (pair.includes(r.dom) && pair.includes(r.rec)) return r.dom;
+    }
+    return null;
+  }
+
+  return null;
+}
+
+function formatGenotypePair(pair, domConfig, priority) {
+  const [a, b] = pair;
+  if (a === b) return [a, b];
+
+  const dom = findDominantForPair(pair, domConfig);
+  if (dom) {
+    const other = (a === dom) ? b : a;
+    return [dom, other];
+  }
+
+  if (priority && (a === priority || b === priority))
+    return (a === priority) ? [a, b] : [b, a];
+
+  return [a, b];
+}
+
+function formatPhenotypePair(pair, domConfig, priority) {
+  const [a, b] = pair;
+
+  if (a === b) {
+    const dom = findDominantForPair(pair, domConfig);
+    return dom ? dom + "_" : a + a;
+  }
+
+  const dom = findDominantForPair(pair, domConfig);
+  if (dom) return dom + "_";
+
+  const [x, y] = formatGenotypePair(pair, null, priority);
+  return x + y;
+}
+
+/* Autosize: scale table to fit wrapper width using CSS transform */
+function autoScalePunnett() {
+  const wrapper = document.getElementById('punnettSquareWrapper');
+  const table = wrapper.querySelector('table');
+  if (!table) return;
+
+  // reset transform before measuring
+  table.style.transform = "scale(1)";
+  table.style.transformOrigin = "top left";
+
+  // small padding safety
+  const maxWidth = Math.max(200, wrapper.clientWidth - 20);
+  const tableWidth = table.offsetWidth;
+
+  if (tableWidth > maxWidth) {
+    const scale = maxWidth / tableWidth;
+    table.style.transform = `scale(${scale})`;
+    // set wrapper height to avoid clipping (table height * scale)
+    wrapper.style.height = (table.offsetHeight * scale + 20) + "px";
+  } else {
+    wrapper.style.height = 'auto';
+  }
+}
+
+/* Render the Punnett square table and legend */
+function renderTable(p1Gametes, p2Gametes, tableData, counts, legendColors) {
+  let html = '<table style="border-collapse:collapse"><tr><th style="border:1px solid #999;padding:6px;"></th>';
+  for (const g2 of p2Gametes) html += `<th style="border:1px solid #999;padding:6px;">${escapeHtmlTokens(g2)}</th>`;
+  html += '</tr>';
+
+  for (let i = 0; i < tableData.length; i++) {
+    html += `<tr><th style="border:1px solid #999;padding:6px;">${escapeHtmlTokens(p1Gametes[i])}</th>`;
+    for (const cell of tableData[i]) {
+      html += `<td style="border:1px solid #999;padding:6px;background:${cell.color};min-width:40px;text-align:center;">${escapeHtmlTokens(cell.display)}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</table>';
+
+  html += `<h3 data-translate="Punnet_text14">Legend & Counts</h3><div id="legend" style="display:flex;flex-wrap:wrap;gap:6px;">`;
+  for (const key in legendColors) {
+    html += `<div style="padding:6px;border:1px solid #ccc;background:${legendColors[key]};">${escapeHtmlTokens(key)} (${counts[key]})</div>`;
+  }
+  html += `</div>`;
+
+  document.getElementById('punnettSquare').innerHTML = html;
+
+  // autoscale and show export buttons
+  setTimeout(() => { autoScalePunnett(); showExportButtons(true); }, 10);
+}
+
+/* Show / hide export buttons */
+function showExportButtons(show) {
+  const eb = document.getElementById('exportButtons');
+  if (!eb) return;
+  eb.style.display = show ? 'block' : 'none';
+}
+
+/* small utility to avoid HTML injection of allele tokens */
+function escapeHtmlTokens(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* ---- Export: SVG and PNG ---- */
+
+/* Build a sanitized HTML snapshot for embedding in SVG foreignObject */
+function getTableSnapshotForExport() {
+  const table = document.querySelector('#punnettSquare table');
+  if (!table) return null;
+  // clone table and inline minimal styles for predictable rendering
+  const clone = table.cloneNode(true);
+
+  // apply minimal inline styles to cloned cells
+  clone.querySelectorAll('th, td').forEach(el => {
+    const cs = window.getComputedStyle(document.querySelector('#punnettSquare table'));
+    el.style.border = '1px solid #999';
+    el.style.padding = '6px';
+    el.style['text-align'] = 'center';
+    el.style['min-width'] = el.tagName.toLowerCase() === 'td' ? '40px' : el.style['min-width'];
+    // keep background if present
+    const bg = el.style.background || el.getAttribute('style')?.match(/background:([^;]+)/)?.[1];
+    if (bg) el.style.background = bg;
+    // preserve font
+    el.style['font-family'] = cs.fontFamily || 'Arial, sans-serif';
+    el.style['font-size'] = cs.fontSize || '14px';
+  });
+
+  // wrap in a div with xmlns so foreignObject can render it
+  const wrapper = document.createElement('div');
+  wrapper.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+  wrapper.appendChild(clone);
+  return wrapper.outerHTML;
+}
+
+/* Generate SVG string containing the table snapshot */
+function punnettToSVGString() {
+  const tableHTML = getTableSnapshotForExport();
+  if (!tableHTML) return null;
+
+  // measure table by temporarily inserting into a hidden container of known width
+  const temp = document.createElement('div');
+  temp.style.position = 'absolute';
+  temp.style.left = '-9999px';
+  temp.style.top = '-9999px';
+  temp.style.visibility = 'hidden';
+  temp.innerHTML = tableHTML;
+  document.body.appendChild(temp);
+  const rect = temp.getBoundingClientRect();
+  const width = Math.max(400, Math.ceil(rect.width));
+  const height = Math.max(200, Math.ceil(rect.height));
+  document.body.removeChild(temp);
+
+  const svg = `<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+  <foreignObject width="100%" height="100%">
+    ${tableHTML}
+  </foreignObject>
+</svg>`;
+  return svg;
+}
+
+/* Download as SVG file */
+function downloadSVG() {
+  const svgString = punnettToSVGString();
+  if (!svgString) return alert("Nothing to export.");
+  const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "punnett_square.svg";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* Download as PNG (render SVG to canvas then save) */
+function downloadPNG() {
+  const svgString = punnettToSVGString();
+  if (!svgString) return alert("Nothing to export.");
+
+  const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+
+  img.onload = () => {
+    // create canvas sized to image
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+
+    // draw white background to avoid transparency issues
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return alert("Export failed.");
+      const pngUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = pngUrl;
+      a.download = "punnett_square.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(pngUrl);
+    }, 'image/png');
+  };
+
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    alert("Could not render PNG. Try exporting SVG instead.");
+  };
+
+  img.src = url;
+}
+loadTranslations(localStorage.getItem("selectedLang") || "en");
+</script>
+
+    <hr>
+    <p data-translate="Punnet_text23">This tool creates Punnett squares for 1–6 genetic traits, supporting both standard Mendelian genetics and advanced dominance rules. Users enter parental alleles for each trait. The tool automatically generates gametes, builds the full Punnett square, and displays genotypes or phenotypes, with proper allele ordering and dominance handling. It includes an interactive dominance setup (simple or multi-rule), color-coded results, counts for each outcome, and a clean, theme-friendly layout.</p>
+  </div>
+
+  <div id="chatbox-button">💬</div>
+  <div id="chatbox">
+    <div class="chatbox-header">
+      <span data-translate="chatbox1">Contact Me</span>
+      <button id="close-chat">✖</button>
+    </div>
+    <div class="chatbox-body">
+      <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+      <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+      <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+      <button id="send-message" data-translate="chatbox5">Send</button>
+    </div>
+  </div>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="translate.js"></script>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" , initial-scale=1.0" />
+  <title>About the Developer</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style_footer.css">
+  <link rel="stylesheet" href="chatbox.css">
+  <link rel="stylesheet" href="drop_style.css">
+  <link rel="stylesheet" href="style_lang.css">
+</head>
+<body>
+<div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+
+    <h1 data-translate="about_title">About</h1>
+<div class="about-section">
+  <div>
+  <img src="Momchi_photo.png" alt="Developer Photo" class="dev-photo" />
+  <img src="Momchi_name.png" class="dev-name"/>
+  </div>
+  <div class="about-text">
+    <p data-translate="about_text1">This platform is developed by Momchil Petkov, student in genomics at the University of Bologna and silver medalist of the 2024 International Biology Olympiad.</p>
+    <p data-translate="about_text2">My mission is to create intuitive, accessible tools and calculators that simplify genetic and genomic analysis for students, researchers, and enthusiasts alike. I believe that powerful bioinformatics resources shouldn't require advanced programming skills to use. By designing clean interfaces and providing meaningful outputs, I aim to make complex biological data easier to understand and explore. Ultimately, I want to support learning, discovery, and collaboration within the genetics community.</p>
+    <p data-translate="about_text3">If you have any questions, suggestions, or ideas for collaboration, I’d be happy to hear from you—feel free to reach out using the contact links below. Sharing this website with others helps grow our community and contributes to the continuous improvement of the tools and content available here. Advertisements on the site help cover basic maintenance costs and ensure the platform remains free and accessible. If you’d like to offer additional support, donations of any size are greatly appreciated and go directly toward further development and upkeep of the project:)</p>
+    <p data-translate="about_text4">Thank you for using "Momchi's Genetics Tools"!</p>
+    <div class="quote-container">
+    <img src="quote1.png" alt="Logo" class="logo">
+    <p class="quote" data-translate="about_quote1">"Science is a way of thinking much more than it is a body of knowledge."</p> 
+    </div>
+    <p class="quote-author" data-translate="about_quote2">  -Carl Sagan </p>
+  </div>
+</div>
+
+
+<hr>   
+     <h3 data-translate="about_contacts">Contacts and donations:</h3>
+    
+     <p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=momchigeneticstools@gmail.com" target="_blank"><img src="email.png" class="contacts-logo"></a></p>
+     <p><a href="https://www.instagram.com/momchis_geneticstools" target="_blank"><img src="instagram.png" class="contacts-logo"></a></p>  
+     <p><a href="https://revolut.me/momchi6mcw" target="_blank"><img src="revolut.png" class="contacts-logo"></a></p>
+
+  
+<div id="chatbox-button">💬</div>
+
+<div id="chatbox">
+  <div class="chatbox-header">
+    <span data-translate="chatbox1">Contact Me</span>
+    <button id="close-chat">✖</button>
+  </div>
+  <div class="chatbox-body">
+    <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+    <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+    <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+    <button id="send-message" data-translate="chatbox5">Send</button>
+  </div>
+</div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="translate.js"></script>
+</body>
+
+</html>

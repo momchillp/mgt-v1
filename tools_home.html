@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280", initial-scale=1.0" />
+  <title>Tools | Momchi's Genetics Tools</title>
+ <link rel="stylesheet" href="style.css" />
+ <link rel="stylesheet" href="style_footer.css">
+ <link rel="stylesheet" href="chatbox.css">
+ <link rel="stylesheet" href="drop_style.css">
+ <link rel="stylesheet" href="style_lang.css">
+ </head>
+ <style>
+  .home-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 20px;
+}
+
+.home-link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-link-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.home-link-card img {
+  width: 120px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px; /* round corners */
+  margin-bottom: 10px;
+}
+
+
+.home-link-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted, #666);
+  line-height: 1.4;
+}
+</style>
+<body>
+<div class="menu-wrapper">
+    <div class="menu-bar">
+    <div class="topbar-buttons">
+      <a href="home.html" class="topbar-btn" data-translate="menu_home">Home</a>
+      <a href="about.html" class="topbar-btn" data-translate="menu_about">About</a>
+    </div>
+
+    <div class="dropdown">
+  <button onclick="location.href='tools_home.html'" class="dropbtn main-link" data-translate="menu_tools">Tools ▾</button>
+  <div class="dropdown-content scroll-menu"> 
+        <a href="dna.html" data-translate="tool1">DNA Translator</a>
+        <a href="rna.html" data-translate="tool2">RNA Translator</a>
+        <a href="dna_to_rna.html" data-translate="tool3">DNA to RNA Converter</a>
+        <a href="rna_to_dna.html" data-translate="tool4">RNA to DNA Converter</a>
+        <a href="reverse_comp.html" data-translate="tool5">Reverse Complement</a>
+        <a href="orf.html" data-translate="tool6">ORF Finder</a>
+        <a href="rna_orf.html" data-translate="tool7">RNA ORF Finder</a>
+        <a href="primer.html" data-translate="tool8">Primer Design</a>
+        <a href="Phylogeny.html" data-translate="tool9">Phylogeny Tree Builder</a>
+        <a href="restriction.html" data-translate="tool10">Restriction site Finder</a>
+        <a href="sequence_search.html" data-translate="tool11">Sequence Search Tool</a>
+        <a href="msa.html" data-translate="tool12">Multi-Sequence Alignment</a>
+        <a href="restriction_digest.html" data-translate="tool13">Restriction Digest Simulator</a>
+        <a href="punnet.html" data-translate="tool14">Punnet Square</a>
+        <a href="protein_structure.html" data-translate="tool15">Protein Structure Predictor</a>
+        <a href="codon_optimisation.html" data-translate="tool16">Codon Optimisation Tool</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button onclick="location.href='calculators_home.html'" class="dropbtn" data-translate="menu_calculators">Calculators ▾</button>
+      <div class="dropdown-content">  
+        <a href="shannon.html" data-translate="calculator1">Shannon diversity index</a>
+        <a href="gc.html" data-translate="calculator2">GC% calculator</a>
+        <a href="PI.html" data-translate="calculator3">Protein Molecular Weight & pI</a>
+        <a href="Hardy-Weinberg.html" data-translate="calculator4">Hardy-Weinberg calculator</a>
+        <a href="Tm.html" data-translate="calculator5">Tm calculator</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="floating-theme-toggle">
+    <span id="theme-label">🌞</span>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider round"></span>
+    </label>
+   <div>
+   <div class="floating-lang-toggle">
+  <div class="custom-lang-switcher" id="lang-switcher">
+    <div class="selected-lang">EN ▼</div>
+    <div class="lang-options">
+      <div data-lang="en">EN</div>
+      <div data-lang="bg">BG</div>
+      <div data-lang="it">IT</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="container">
+         <h1>
+      <img src="Logo.png" alt="Logo" class="logo">
+      Momchi's Genetics Tools™
+    </h1>
+
+<hr>
+  <div class="home-buttons">
+  <a href="dna.html" class="home-link-card">
+    <img src="images/dna.png" alt="DNA Translator">
+    <h3 data-translate="tool1">DNA Translator</h3>
+    <p data-translate="tools_info1">Convert DNA sequences into protein sequences quickly and accurately.</p>
+  </a>
+
+  <a href="rna.html" class="home-link-card">
+    <img src="images/rna.png" alt="RNA Translator">
+    <h3 data-translate="tool2">RNA Translator</h3>
+    <p data-translate="tools_info2">Translate RNA sequences into proteins with codon-level precision.</p>
+  </a>
+
+  <a href="dna_to_rna.html" class="home-link-card">
+    <img src="images/dna_to_rna.png" alt="DNA to RNA Converter">
+    <h3 data-translate="tool3">DNA → RNA Converter</h3>
+    <p data-translate="tools_info3">Convert DNA sequences into corresponding RNA strands.</p>
+  </a>
+
+  <a href="rna_to_dna.html" class="home-link-card">
+    <img src="images/rna_to_dna.png" alt="RNA to DNA Converter">
+    <h3 data-translate="tool4">RNA → DNA Converter</h3>
+    <p data-translate="tools_info4">Convert RNA back into DNA format with accurate base pairing.</p>
+  </a>
+
+  <a href="reverse_comp.html" class="home-link-card">
+    <img src="images/reverse.png" alt="Reverse Complement">
+    <h3 data-translate="tool5">Reverse Complement</h3>
+    <p data-translate="tools_info5">Generate reverse complements of DNA sequences instantly.</p>
+  </a>
+
+  <a href="orf.html" class="home-link-card">
+    <img src="images/orf.png" alt="ORF Finder">
+    <h3 data-translate="tool6">ORF Finder</h3>
+    <p data-translate="tools_info6">Identify open reading frames across both DNA strands.</p>
+  </a>
+
+  <a href="rna_orf.html" class="home-link-card">
+    <img src="images/rna_orf.png" alt="RNA ORF Finder">
+    <h3 data-translate="tool7">RNA ORF Finder</h3>
+    <p data-translate="tools_info7">Locate coding regions within RNA transcripts efficiently.</p>
+  </a>
+  
+  <a href="restriction.html" class="home-link-card">
+    <img src="images/restriction.png" alt="Restriction Site Finder">
+    <h3 data-translate="tool10">Restriction Site Finder</h3>
+    <p data-translate="tools_info8">Detect enzyme restriction sites across DNA sequences.</p>
+  </a>
+
+  <a href="sequence_search.html" class="home-link-card">
+    <img src="images/seq_search.png" alt="Sequence Search Tool">
+    <h3 data-translate="tool11">Sequence Search Tool</h3>
+    <p data-translate="tools_info9">Find specific sequence across larger DNA input.</p>
+  </a>
+
+  <a href="primer.html" class="home-link-card">
+    <img src="images/primer.png" alt="Primer Design Tool">
+    <h3 data-translate="tool8">Primer Design Tool</h3>
+    <p data-translate="tools_info10">Design optimal PCR primers with GC content and Tm analysis.</p>
+  </a>
+
+  <a href="Phylogeny.html" class="home-link-card">
+    <img src="images/tree.png" alt="Phylogeny Tree Builder">
+    <h3 data-translate="tool9">Phylogeny Tree Builder</h3>
+    <p data-translate="tools_info11">Construct and visualize evolutionary trees from DNA sequences.</p>
+  </a>
+
+  <a href="msa.html" class="home-link-card">
+    <img src="images/msa.png" alt="Multi-Sequence Alignment">
+    <h3 data-translate="tool12">Multi-Sequence Alignment</h3>
+    <p data-translate="tools_info12">Align up to 4 DNA/Protein sequences.</p>
+  </a>
+  
+  <a href="restriction_digest.html" class="home-link-card">
+    <img src="images/restriction_digest.png" alt="Restriction Digest Simulator">
+    <h3 data-translate="tool13">Restriction Digest Simulator</h3>
+    <p data-translate="tools_info13">Simulate the fragments produced when one or more restriction enzymes cut DNA sequence.</p>
+  </a>
+
+  <a href="punnet.html" class="home-link-card">
+    <img src="images/punnet.png" alt="Punnet Square">
+    <h3 data-translate="tool14">Punnet Square</h3>
+    <p data-translate="tools_info14">Generate interactive Punnet Square for given genes and their alleles.</p>
+  </a>
+ 
+  <a href="protein_structure.html" class="home-link-card">
+    <img src="images/protein_structure.png" alt="Protein Structure Predictor">
+    <h3 data-translate="tool15">Protein Structure Predictor</h3>
+    <p data-translate="tools_info15">Predict the secondary structure and hydrophobicity of a protein based on amino acid sequence.</p>
+  </a>
+
+  <a href="codon_optimisation.html" class="home-link-card">
+    <img src="images/codon_optimisation.png" alt="Codon Optimisation Tool">
+    <h3 data-translate="tool16">Codon Optimisation Tool</h3>
+    <p data-translate="tools_info16">Suggests an optimazed sequence for DNA in a specific host organism.</p>
+  </a>
+
+  </div>
+</div>
+</div>
+<div id="chatbox-button">💬</div>
+
+<div id="chatbox">
+  <div class="chatbox-header">
+    <span data-translate="chatbox1">Contact Me</span>
+    <button id="close-chat">✖</button>
+  </div>
+  <div class="chatbox-body">
+    <input type="text" id="chat-name" data-translate="chatbox2" placeholder="Your Name" />
+    <input type="email" id="chat-email" data-translate="chatbox3" placeholder="Your Email" />
+    <textarea id="chat-message" data-translate="chatbox4" placeholder="Type your message..."></textarea>
+    <button id="send-message" data-translate="chatbox5">Send</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="chatbox.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="translate.js"></script>
+ <footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025|Momchi's Genetics Tools. All rights reserved.</p>
+    <p>
+      <a href="about.html" data-translate="menu_about">About</a> |
+      <a href="privacy.html" data-translate="privacy_title">Privacy Policy</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
